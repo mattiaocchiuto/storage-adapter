@@ -144,17 +144,14 @@ var StorageAdapter = function() {}
 StorageAdapter.getAdapter = function(){
   var adapter = null;
   if (LocalStorage.exist()){
-    console.log('local');
     Interface.ensureImplements(LocalStorage, StorageInterface);
     this.adapter = LocalStorage;
   }
   else if (CookiesStorage.exist()){
-    console.log('cookie');
     Interface.ensureImplements(LocalStorage, CookiesStorage);
     this.adapter = CookiesStorage;
   }
   else if (UrlStorage.exist()){
-    console.log('url');
     Interface.ensureImplements(LocalStorage, UrlStorage);
     this.adapter = UrlStorage;
   }
