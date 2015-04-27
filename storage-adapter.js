@@ -71,39 +71,68 @@ LocalStorage.get = function(){
   localStorage.removeItem(arguments[0]);
 }
 
-//
-var CookiesStorage = function (){
-  this.expires = 1;
-}
-CookiesStorage.exist = function (){
-  if(typeof navigator !== 'undefined'){
-    return navigator.cookieEnabled;
-  }
-  return false;
-}
-CookiesStorage.set = function (){
-  var d = new Date(),
-      expirDay = arguments[2] || this.expires;
+var CookiesStorage = {};
 
-  d.setTime(d.getTime() + (expirDay*24*60*60*1000));
-  var expires = "expires="+d.toUTCString();
-  try{
-    document.cookie = arguments[0] + "=" + arguments[1] + "; " + expires;
-  } catch(e){}
+/**
+ * Default expiration time
+ */
+CookiesStorage.expires = 1;
 
-}
-CookiesStorage.get = function (){
-  checkArgumentsNumber(arguments, 1);
-  var name = arguments[0] + "=",
-      ca = document.cookie.split(';');
+/**
+ * Check if cookies are available
+ */
+CookiesStorage.exist = function () {
+    if (navigator !== undefined) {
+        return navigator.cookieEnabled;
+    }
 
-  for(var i=0; i<ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0)==' ') c = c.substring(1);
-    if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-  }
-  return "";
-}
+    return false;
+};
+
+/**
+ * Store a new cookie
+ *
+ * @param name: String
+ * @param value: String|Int
+ * @param expiration: String|Int
+ */
+CookiesStorage.set = function (name, value, expiration) {
+    var date = new Date(),
+        expirDay = expiration || this.expires,
+        expires;
+
+    date.setTime(date.getTime() + (expirDay * 24 * 60 * 60 * 1000));
+    expires = "expires=" + date.toUTCString();
+
+    try {
+        document.cookie = name + "=" + value + "; " + expires;
+    } catch (e) {}
+};
+
+/**
+ * Retrieve a cookie
+ *
+ * @param name: String
+ */
+CookiesStorage.get = function (name) {
+    var ca = document.cookie.split(';');
+
+    name = name + "=";
+
+    for (var i = 0, length = ca.length; i < length; i++) {
+        var c = ca[i];
+
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+
+    return "";
+};
 
 //
 var UrlStorage = function (){
